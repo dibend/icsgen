@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICS File Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 700px;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.5rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Animations */
+        .form-group, .btn-primary {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Stagger animations for form groups */
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+        .form-group:nth-child(5) { animation-delay: 0.5s; }
+        .form-group:nth-child(6) { animation-delay: 0.6s; } /* For the button */
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .form-group, .btn-primary, .btn-primary:hover {
+                animation: none;
+                transition: none;
+                transform: none;
+            }
+        }
+
+        .alert {
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Custom styling for datetime-local clear button (webkit) */
+        input[type="datetime-local"]::-webkit-clear-button {
+            display: none; /* Hide the default clear button */
+        }
+        input[type="datetime-local"]::-webkit-inner-spin-button {
+            /* Optional: style the spin button or hide it */
+            /* display: none; */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="bi bi-calendar-plus"></i> ICS Event Generator</h1>
+        
+        <form id="icsForm">
+            <div class="form-group mb-3">
+                <label for="eventTitle" class="form-label">Event Title <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="eventTitle" placeholder="e.g., Team Meeting" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="eventDescription" class="form-label">Event Description</label>
+                <textarea class="form-control" id="eventDescription" rows="3" placeholder="e.g., Discuss project updates"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="eventStartDate" class="form-label">Start Date & Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="eventStartDate" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="eventEndDate" class="form-label">End Date & Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="eventEndDate" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="eventLocation" class="form-label">Location</label>
+                <input type="text" class="form-control" id="eventLocation" placeholder="e.g., Conference Room A or Online">
+            </div>
+            
+            <div class="form-group mb-4 text-center">
+                <button type="submit" class="btn btn-primary w-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                    </svg>
+                    Generate & Download .ics File
+                </button>
+            </div>
+        </form>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            const icsForm = document.getElementById('icsForm');
+            const messageArea = document.getElementById('messageArea');
+
+            icsForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Clear previous messages
+                messageArea.innerHTML = '';
+
+                // Get form values
+                const title = document.getElementById('eventTitle').value.trim();
+                const description = document.getElementById('eventDescription').value.trim();
+                const startDateInput = document.getElementById('eventStartDate').value;
+                const endDateInput = document.getElementById('eventEndDate').value;
+                const location = document.getElementById('eventLocation').value.trim();
+
+                // Basic Validation
+                if (!title || !startDateInput || !endDateInput) {
+                    displayMessage('Please fill in all required fields (Title, Start Date, End Date).', 'danger');
+                    return;
+                }
+
+                const startDate = new Date(startDateInput);
+                const endDate = new Date(endDateInput);
+
+                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                    displayMessage('Invalid date format. Please check your start and end dates.', 'danger');
+                    return;
+                }
+
+                if (endDate <= startDate) {
+                    displayMessage('End date must be after start date.', 'danger');
+                    return;
+                }
+
+                // Generate ICS content
+                try {
+                    const icsContent = generateICSContent(title, description, startDate, endDate, location);
+                    const filename = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'event'}.ics`;
+                    downloadICSFile(filename, icsContent);
+                    displayMessage('Successfully generated and downloaded .ics file!', 'success');
+                    icsForm.reset(); // Optionally reset the form
+                } catch (error) {
+                    console.error("Error generating ICS:", error);
+                    displayMessage('An error occurred while generating the .ics file. Check console for details.', 'danger');
+                }
+            });
+
+            /**
+             * Formats a JavaScript Date object into an ICS compatible UTC date-time string.
+             * Example: 20231026T100000Z
+             * @param {Date} date - The JavaScript Date object.
+             * @returns {string} - The ICS formatted date-time string in UTC.
+             */
+            function formatICSDate(date) {
+                if (!(date instanceof Date) || isNaN(date)) {
+                    throw new Error("Invalid date object provided to formatICSDate");
+                }
+                // Convert to UTC
+                // getUTCFullYear, getUTCMonth (0-indexed), getUTCDate, getUTCHours, getUTCMinutes, getUTCSeconds
+                const year = date.getUTCFullYear();
+                const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+                const day = date.getUTCDate().toString().padStart(2, '0');
+                const hours = date.getUTCHours().toString().padStart(2, '0');
+                const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+                return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+            }
+            
+            /**
+             * Escapes special characters in ICS content strings.
+             * @param {string} text - The text to escape.
+             * @returns {string} - The escaped text.
+             */
+            function escapeICSString(text) {
+                if (typeof text !== 'string') return '';
+                return text.replace(/\\/g, '\\\\')  // Escape backslashes
+                           .replace(/;/g, '\\;')    // Escape semicolons
+                           .replace(/,/g, '\\,')    // Escape commas
+                           .replace(/\n/g, '\\n');  // Escape newlines
+            }
+
+            /**
+             * Generates the content for the .ics file.
+             * @param {string} title - Event title.
+             * @param {string} description - Event description.
+             * @param {Date} startDate - Event start date.
+             * @param {Date} endDate - Event end date.
+             * @param {string} location - Event location.
+             * @returns {string} - The ICS file content.
+             */
+            function generateICSContent(title, description, startDate, endDate, location) {
+                const uid = `ics-generator-${Date.now()}-${Math.random().toString(36).substr(2, 9)}@example.com`;
+                const dtstamp = formatICSDate(new Date()); // Current time in UTC for DTSTAMP
+                const dtstart = formatICSDate(startDate);
+                const dtend = formatICSDate(endDate);
+
+                // Build ICS content line by line
+                // Using an array and join is often more efficient for building strings
+                const icsLines = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//YourAppName//ICS Generator//EN', // Product ID
+                    'CALSCALE:GREGORIAN',
+                    'BEGIN:VEVENT',
+                    `UID:${uid}`,
+                    `DTSTAMP:${dtstamp}`,
+                    `DTSTART:${dtstart}`,
+                    `DTEND:${dtend}`,
+                    `SUMMARY:${escapeICSString(title)}`,
+                ];
+
+                if (description) {
+                    icsLines.push(`DESCRIPTION:${escapeICSString(description)}`);
+                }
+                if (location) {
+                    icsLines.push(`LOCATION:${escapeICSString(location)}`);
+                }
+                
+                // Add a simple reminder (e.g., 15 minutes before)
+                // This is a basic example; full alarm features are more complex
+                icsLines.push('BEGIN:VALARM');
+                icsLines.push('ACTION:DISPLAY');
+                icsLines.push('DESCRIPTION:Reminder');
+                icsLines.push('TRIGGER:-PT15M'); // 15 minutes before
+                icsLines.push('END:VALARM');
+
+                icsLines.push('END:VEVENT');
+                icsLines.push('END:VCALENDAR');
+
+                return icsLines.join('\r\n'); // Standard line ending for ICS is CRLF
+            }
+
+            /**
+             * Triggers a file download in the browser.
+             * @param {string} filename - The desired filename for the download.
+             * @param {string} content - The content of the file.
+             */
+            function downloadICSFile(filename, content) {
+                const element = document.createElement('a');
+                // Use Blob for better handling of content types and character encoding
+                const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                
+                element.setAttribute('href', url);
+                element.setAttribute('download', filename);
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+                URL.revokeObjectURL(url); // Clean up the object URL
+            }
+
+            /**
+             * Displays a message to the user.
+             * @param {string} text - The message text.
+             * @param {string} type - The type of message ('success', 'danger', 'warning', 'info').
+             */
+            function displayMessage(text, type) {
+                messageArea.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                                            ${text}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                         </div>`;
+            }
+        });
+    </script>
+</body>
+</html>
